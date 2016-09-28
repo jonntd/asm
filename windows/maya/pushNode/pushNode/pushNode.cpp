@@ -109,8 +109,9 @@ MStatus PushNode::deform( MDataBlock& data, MItGeometry& iter,
 	 meshFn.getNormals(normals, MSpace::kWorld);
 
 
-
 	 MPoint temp; 
+	 float testf = 1.0f;
+	 double x = testf;
 	 for (int i=0; i< iter.exactCount(); i++)
 	 {
 		 
@@ -121,10 +122,11 @@ MStatus PushNode::deform( MDataBlock& data, MItGeometry& iter,
 		 else
 		 {
 			//pos[i] += (MVector(normals[i])*envelopeV*amountV);
-			push_no_stress_loop(&pos[0].x, &normals[0].x, amountV*envelopeV, iter.count());
+			//push_no_stress_loop(&pos[0].x, &normals[0].x, amountV*envelopeV, iter.count());
 		 }
 		
 	 }
+		push_no_stress_loop(&pos[0].x, &normals[0].x, amountV*envelopeV, iter.count());
 
 	 //set all the positions
 	iter.setAllPositions(pos);
