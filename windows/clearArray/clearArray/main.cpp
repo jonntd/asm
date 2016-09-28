@@ -2,9 +2,9 @@
 #include <vector>
 
 
-extern "C" int clear_array_to_value(void* ptr, 
+extern "C" int zero_array(void* ptr, 
 									unsigned int size_in_byte, 
-									unsigned int byte_at_once,
+									unsigned int byte_at_once
 									);
 
 int main()
@@ -19,7 +19,7 @@ int main()
 	auto first = &data[0];
 	data[20] = 99999999;
 	auto size = data.size()*sizeof(int);
-	bool res = clear_array_to_value(first, size, 8);
+	bool res = zero_array(first, size, 8);
 	std::cout << "clearing was result was: " << res << std::endl;
 
 	std::cin.get();
