@@ -126,7 +126,8 @@ MStatus PushNode::deform( MDataBlock& data, MItGeometry& iter,
 		 }
 		
 	 }
-		push_no_stress_loop(&pos[0].x, &normals[0].x, amountV*envelopeV, iter.count());
+		//push_no_stress_loop(&pos[0].x, &normals[0].x, amountV*envelopeV, iter.count());
+		push_no_stress_avx_loop(&pos[0].x, &normals[0].x, amountV*envelopeV, iter.count());
 
 	 //set all the positions
 	iter.setAllPositions(pos);

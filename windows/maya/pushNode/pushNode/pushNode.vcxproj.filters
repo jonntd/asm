@@ -39,7 +39,10 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <MASM Include="compute.asm">
+    <MASM Include="compute_basic.asm">
+      <Filter>Source Files</Filter>
+    </MASM>
+    <MASM Include="compute_basic_avx.asm">
       <Filter>Source Files</Filter>
     </MASM>
   </ItemGroup>

@@ -11,9 +11,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <MASM Include="compute.asm">
+    <MASM Include="compute_basic.asm">
       <FileType>Document</FileType>
     </MASM>
+    <MASM Include="compute_basic_avx.asm" />
     <None Include="Options.txt" />
     <None Include="ReadMe.txt" />
   </ItemGroup>
@@ -74,6 +75,7 @@
       <AdditionalOptions>%(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>.;C:\Program Files\Autodesk\Maya2016\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeaderOutputFile>$(Configuration)\pushNode.pch</PrecompiledHeaderOutputFile>
+      <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
