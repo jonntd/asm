@@ -31,6 +31,9 @@ public :
 	static MObject		stressMap;
 	static MObject		useStress;
 	static MObject		amount;
+private:
+	int sample_count = 0;
+	long long int total = 0;
 
   
 };

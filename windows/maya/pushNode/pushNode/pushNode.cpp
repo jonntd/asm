@@ -16,6 +16,7 @@
 
 #include <set>
 #include <asm.h>
+#include <chrono>
 
 #define SMALL (float)1e-6
 #define BIG_DIST 99999
@@ -25,7 +26,9 @@ MTypeId     PushNode::id( 0x00108b1F);
 MObject PushNode::stressMap ;
 MObject PushNode::useStress ;
 MObject PushNode::amount;
-
+using std::chrono::nanoseconds;
+using std::chrono::duration_cast;
+typedef std::chrono::high_resolution_clock Clock;
 
 PushNode::PushNode()
 {
@@ -71,7 +74,10 @@ MStatus PushNode::deform( MDataBlock& data, MItGeometry& iter,
 						const MMatrix& localToWorldMatrix, 
 						unsigned int mIndex )
 {	
-	
+	sample_count += 1;
+	std::cout << "evaluating" << std::endl;
+	//auto tot0 = Clock::now();
+
 	 // Getting needed data
 	 double envelopeV = data.inputValue(envelope).asFloat();
 	 bool useStressV = data.inputValue(useStress).asBool();
@@ -109,27 +115,63 @@ MStatus PushNode::deform( MDataBlock& data, MItGeometry& iter,
 	 meshFn.getNormals(normals, MSpace::kWorld);
 
 
-	 MPoint temp; 
-	 float testf = 1.0f;
-	 double x = testf;
-	 for (int i=0; i< iter.exactCount(); i++)
-	 {
-		 
-		 if( useStressV == true)
-		 {
-			pos[i] += (MVector(normals[i])*envelopeV*amountV*stressV[i]);
-		 }
-		 else
-		 {
-			//pos[i] += (MVector(normals[i])*envelopeV*amountV);
-			//push_no_stress_loop(&pos[0].x, &normals[0].x, amountV*envelopeV, iter.count());
-		 }
-		
-	 }
-		//push_no_stress_loop(&pos[0].x, &normals[0].x, amountV*envelopeV, iter.count());
-		push_no_stress_avx_loop(&pos[0].x, &normals[0].x, amountV*envelopeV, iter.count());
+	 auto loop0 = Clock::now();
 
-	 //set all the positions
-	iter.setAllPositions(pos);
+	 //if (useStressV == true)
+	 //{
+
+	 //    for (int i = 0; i < iter.exactCount(); ++i)
+	 //    {
+
+	 //   	 pos[i] += (MVector(normals[i])*envelopeV*amountV*stressV[i]);
+	 //    }
+	 //}
+	 //else
+	 //{
+	 auto pppp = pos[0];
+	 pppp[1];
+	 int count = pos.length();
+	 //for (int i = 0; i <count ; ++i)
+	 //{
+	 //    pos[i] += (MVector(normals[i])*envelopeV*amountV);
+	 //}
+
+	 double *ppos = &pos[0].x;
+	 float *pnorm = &normals[0].x;
+	 int idxp = 0;
+	 int idxn = 0;
+	 double weight = envelopeV*amountV;
+	 for (int i = 0; i <count ; ++i)
+	 {
+	     idxp = i * 4;
+	     idxn = i * 3;
+	     ppos[idxp] += ((pnorm[idxn])*weight);
+	     ppos[idxp +1] += ((pnorm[idxn+1]) *weight);
+	     ppos[idxp +2] += ((pnorm[idxn+2])*weight);
+	 }
+	 //push_no_stress_loop(&pos[0].x, &normals[0].x, amountV*envelopeV, count);
+	 push_no_stress_avx_loop(&pos[0].x, &normals[0].x, amountV*envelopeV, count);
+
+	  //set all the positions
+
+	 auto loop1 = Clock::now();
+	 iter.setAllPositions(pos);
+
+	 //auto tot1 = Clock::now();
+	 //auto duration1 = std::chrono::duration_cast<std::chrono::microseconds>(tot1 - tot0).count();
+	 auto duration2 = std::chrono::duration_cast<std::chrono::microseconds>(loop1 - loop0).count();
+	 total += duration2;
+	 //std::cout << "full time: " << duration1 << std::endl;
+	 //std::cout << "loop time: " << duration2 << std::endl;
+	 //std::cout.flush();
+	 //std::setvbuf(stdout, NULL, _IONBF, 0);
+	 //MGlobal::displayInfo("full time " + MString("") + duration1);
+	 if (sample_count > 100)
+	 {
+		 total /= 100;
+		 MGlobal::displayInfo("loop time " + MString("") + total);
+		 total = 0;
+		 sample_count= 0;
+	 }
 	return MStatus::kSuccess ; 
 }
