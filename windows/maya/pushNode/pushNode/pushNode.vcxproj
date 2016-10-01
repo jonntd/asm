@@ -16,6 +16,7 @@
     </MASM>
     <MASM Include="compute_basic_avx.asm" />
     <MASM Include="compute_basic_avx_loop_two.asm" />
+    <MASM Include="compute_basic_avx_threaded.asm" />
     <None Include="Options.txt" />
     <None Include="ReadMe.txt" />
   </ItemGroup>

@@ -48,5 +48,8 @@
     <MASM Include="compute_basic_avx_loop_two.asm">
       <Filter>Source Files</Filter>
     </MASM>
+    <MASM Include="compute_basic_avx_threaded.asm">
+      <Filter>Source Files</Filter>
+    </MASM>
   </ItemGroup>
 </Project>

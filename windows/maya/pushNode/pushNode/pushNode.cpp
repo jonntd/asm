@@ -17,6 +17,7 @@
 #include <set>
 #include <asm.h>
 #include <chrono>
+#include <Windows.h>
 
 #define SMALL (float)1e-6
 #define BIG_DIST 99999
@@ -128,8 +129,6 @@ MStatus PushNode::deform( MDataBlock& data, MItGeometry& iter,
 	 //}
 	 //else
 	 //{
-	 auto pppp = pos[0];
-	 pppp[1];
 	 int count = pos.length();
 	 //for (int i = 0; i <count ; ++i)
 	 //{
@@ -138,20 +137,21 @@ MStatus PushNode::deform( MDataBlock& data, MItGeometry& iter,
 
 	 double *ppos = &pos[0].x;
 	 float *pnorm = &normals[0].x;
-	 int idxp = 0;
-	 int idxn = 0;
-	 double weight = envelopeV*amountV;
-	 for (int i = 0; i <count ; ++i)
-	 {
-	     idxp = i * 4;
-	     idxn = i * 3;
-	     ppos[idxp] += ((pnorm[idxn])*weight);
-	     ppos[idxp +1] += ((pnorm[idxn+1]) *weight);
-	     ppos[idxp +2] += ((pnorm[idxn+2])*weight);
-	 }
+	 //int idxp = 0;
+	 //int idxn = 0;
+	 //double weight = envelopeV*amountV;
+	 //for (int i = 0; i <count ; ++i)
+	 //{
+	 //    idxp = i * 4;
+	 //    idxn = i * 3;
+	 //    ppos[idxp] += ((pnorm[idxn])*weight);
+	 //    ppos[idxp +1] += ((pnorm[idxn+1]) *weight);
+	 //    ppos[idxp +2] += ((pnorm[idxn+2])*weight);
+	 //}
 	 //push_no_stress_loop(&pos[0].x, &normals[0].x, amountV*envelopeV, count);
-	 push_no_stress_avx_loop(&pos[0].x, &normals[0].x, amountV*envelopeV, count);
-
+	 //push_no_stress_avx_loop(&pos[0].x, &normals[0].x, amountV*envelopeV, count);
+	 HANDLE id = push_no_stress_avx_threaded( &pos[0].x, &normals[0].x, amountV*envelopeV, count);
+	 //  WaitForSingleObject(id, INFINITE);
 	  //set all the positions
 
 	 auto loop1 = Clock::now();
