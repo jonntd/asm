@@ -153,6 +153,7 @@ MStatus PushNode::deform( MDataBlock& data, MItGeometry& iter,
 	 HANDLE id = push_no_stress_avx_threaded( &pos[0].x, &normals[0].x, amountV*envelopeV, count);
 	 //  WaitForSingleObject(id, INFINITE);
 	  //set all the positions
+	 //WaitForMultipleObjects(;
 
 	 auto loop1 = Clock::now();
 	 iter.setAllPositions(pos);
