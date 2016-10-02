@@ -86,15 +86,6 @@ MStatus PushNode::deform( MDataBlock& data, MItGeometry& iter,
 
 	 //If the useStress attr is turned on let s pull
 	 //out the data of the stress map
-	 MDoubleArray stressV;
-	 if (useStressV == true)
-	 {
-		 //lets pull out the raw data as an MObject
-		 MObject stressData = data.inputValue(stressMap).data();
-		 //Now lets convert the row data to a double array
-		 MFnDoubleArrayData stressDataFn(stressData);
-		 stressV = stressDataFn.array();
-	 }
 
 	 //if envelop is zero do not compute
 	 if (envelopeV < SMALL ) 
@@ -118,25 +109,14 @@ MStatus PushNode::deform( MDataBlock& data, MItGeometry& iter,
 
 	 auto loop0 = Clock::now();
 
-	 //if (useStressV == true)
-	 //{
-
-	 //    for (int i = 0; i < iter.exactCount(); ++i)
-	 //    {
-
-	 //   	 pos[i] += (MVector(normals[i])*envelopeV*amountV*stressV[i]);
-	 //    }
-	 //}
-	 //else
-	 //{
 	 int count = pos.length();
+	 //maya api example
 	 //for (int i = 0; i <count ; ++i)
 	 //{
 	 //    pos[i] += (MVector(normals[i])*envelopeV*amountV);
 	 //}
 
-	 double *ppos = &pos[0].x;
-	 float *pnorm = &normals[0].x;
+	 //pure pointers  example
 	 //int idxp = 0;
 	 //int idxn = 0;
 	 //double weight = envelopeV*amountV;
@@ -148,25 +128,22 @@ MStatus PushNode::deform( MDataBlock& data, MItGeometry& iter,
 	 //    ppos[idxp +1] += ((pnorm[idxn+1]) *weight);
 	 //    ppos[idxp +2] += ((pnorm[idxn+2])*weight);
 	 //}
+
+	 //basic assembly
 	 //push_no_stress_loop(&pos[0].x, &normals[0].x, amountV*envelopeV, count);
+
+	 //assembly avx
 	 //push_no_stress_avx_loop(&pos[0].x, &normals[0].x, amountV*envelopeV, count);
-	 HANDLE id = push_no_stress_avx_threaded( &pos[0].x, &normals[0].x, amountV*envelopeV, count);
-	 //  WaitForSingleObject(id, INFINITE);
-	  //set all the positions
-	 //WaitForMultipleObjects(;
+
+	 //avx and threaded example
+	 push_no_stress_avx_threaded( &pos[0].x, &normals[0].x, amountV*envelopeV, count);
 
 	 auto loop1 = Clock::now();
 	 iter.setAllPositions(pos);
 
-	 //auto tot1 = Clock::now();
-	 //auto duration1 = std::chrono::duration_cast<std::chrono::microseconds>(tot1 - tot0).count();
 	 auto duration2 = std::chrono::duration_cast<std::chrono::microseconds>(loop1 - loop0).count();
 	 total += duration2;
-	 //std::cout << "full time: " << duration1 << std::endl;
-	 //std::cout << "loop time: " << duration2 << std::endl;
-	 //std::cout.flush();
-	 //std::setvbuf(stdout, NULL, _IONBF, 0);
-	 //MGlobal::displayInfo("full time " + MString("") + duration1);
+
 	 if (sample_count > 100)
 	 {
 		 total /= 100;
